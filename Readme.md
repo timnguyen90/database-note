@@ -350,6 +350,8 @@ Với dạng index này thì nó sẽ phù hợp với việc query ở trườn
 # 9. Join method.
 
 # 10. References
-[Use The Index Luke](https://use-the-index-luke.com/)
-[Blog Quantricosodulieu](https://quantricsdulieu.com/blog/)
-[SQL Performance Explained book](https://sql-performance-explained.com/)
+[1. Use The Index Luke](https://use-the-index-luke.com/)
+
+[2. Blog Quantricosodulieu](https://quantricsdulieu.com/blog/)
+
+[3. SQL Performance Explained book](https://sql-performance-explained.com/)
