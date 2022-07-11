@@ -254,6 +254,91 @@ Từ 2 điều kiện nó sẽ tạo ra 2 array chứa từng điều kiện tư
 
 # 4. Tunning with index
 
+## 4.1 B-Tree index
+
+**Overview**
+
+![image](images/19.png)
+Minh họa hoạt động của B-Tree: https://www.cs.usfca.edu/~galles/visualization/BTree.html
+
+**Detail**
+Một dạng tree phổ biến là binary search tree ( cây tìm kiếm nhị phân)
+vấn đề với dạng này là nó sẽ gặp trường hợp là cây sẽ không cân bằng và việc tìm kiếm sẽ lâu hơn.
+
+![image](images/20.png)
+
+Để giải quyết vấn đề trên thì ta có cây cân bằng, nhưng vấn đề của cây cân bằng sẽ gặp phải khi mà dữ liệu ta nhiều lên, vì cây cân bằng thì mỗi node chỉ có nhiều nhất là 2 con mà thôi.
+
+![image](images/21.png)
+
+Để giải quyết các vấn đề trên thì các hệ cơ sở dữ liệu dùng B-tree.
+
+![image](images/22.png)
+
+## 4.2 Hash index
+
+Xem thêm https://bertwagner.com/posts/hash-match-join-internals/
+
+Hash index được tạo tạm trong bộ nhớ, nên khi chạy lại câu truy vấn thì hash index sẽ được tạo lại
+
+Hash index được sử dụng khi ta dùng câu join mà trên trường không có index trên trường ta truy vấn hay trên trường ta filter theo điều kiện.
+Hoặc ta có index theo B-tree index nhưng dữ liệu quá lớn, hay ta đánh b-tree index nhưng không hiểu quả. => CSDL sẽ thực thiện đánh lại index nếu đã có index hoặc tạo mới index nếu chưa có index.
+
+**Tạo hash index**
+Cú pháp tạo Hash index cho một cột, ví dụ cho cột email ở bảng users:
+
+```sql
+create index on users using hash(email);
+```
+Khi thực hiện lệnh trên, database sẽ:
+
+- Lấy từng giá trị ở cột email (key) + TID (vị trí của row trong bảng), cho vào một hash function
+- Hash function này tiến hành hashing (băm) key và trả về một số (dạng integer).
+- Số này đóng vai trò là index trong một mảng (array) các bucket. Mỗi bucket sẽ chứa một hoặc nhiều cặp giá trị key-TID
+- Database sẽ dựa vào index vừa tính ra được để nhét cặp key-TID mới vào trong array
+
+**Cách hoạt động của hash index**
+
+- Ta có 2 bảng là **Build Input** và **Probe Input**.
+- Ta dùng một giải thuật ở `Hash Function1` để băm và gom nhóm các giá trị của bạn ***Build Input** vào một bảng gọi là **Hash Table**.
+- Sau đó, từ bảng Probe Input, ta sẽ lần lượt băm các giá trị cũng với `Hash Functon`.
+- Tiếp theo với giá trị được băm ra của bảng **Probe Input**, với giá trị đó ta sẽ biết được nó nằm ở **Buckets** nào (1, hay 2, hay 3). Sau khi đã biết được nó nằm ở **Buckets** nào thì sẽ dùng giá trị cần tìm tìm trong **Buckets** để xem có giá trị nào cần tìm hay không. Điều này cũng tương tự khi ta sử dụng order by với dạng index này.
+
+
+
+
+![image](images/23.png)
+
+![image](images/24.png)
+
+![image](images/25.gif)
+
+![image](images/26.gif)
+
+**Sử dụng hash index**
+Hash index sẽ được database cân nhắc sử dụng khi:
+- Cột được đánh Hash index được sử dụng trong mệnh đề WHERE với phép so sánh =
+
+## 4.3 Composite Index
+
+Với composite index, chúng ta có thể tạo 1 index cho nhiều cột:
+
+```sql
+CREATE INDEX idx_multi_col ON table_name(col_1, col_2, ..., col_n)
+```
+
+Ví dụ trong lệnh sau
+
+Thì ta tạo index trên 2 thuộc tính là name và age. Khi tạo như vầy thì giá trị name sẽ được sắp xếp trước sau đó tới sắp xếp theo age.
+
+![image](images/27.png)
+
+```sql
+CREATE INDEX idx_name_age ON user(name, age)
+```
+
+Với dạng index này thì nó sẽ phù hợp với việc query ở trường name và age hoặc chỉ theo name, vì như ta thấy trên hình thì bên table index thì trường name được sắp xếp còn trường age thì không, Age chỉ sắp sếp khi trong bảng ghi nó cùng tên, ví dụ ta thấy An có 2 tên thì nó sắp xếp các giá trị của An
+
 # 5. Index suppression
 
 # 6. Các phương pháp tuning đơn giản
