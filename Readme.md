@@ -331,7 +331,7 @@ Ví dụ trong lệnh sau
 
 Thì ta tạo index trên 2 thuộc tính là name và age. Khi tạo như vầy thì giá trị name sẽ được sắp xếp trước sau đó tới sắp xếp theo age.
 
-![image](images/27.png)
+![image](images/27.gif)
 
 ```sql
 CREATE INDEX idx_name_age ON user(name, age)
